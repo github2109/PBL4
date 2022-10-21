@@ -1,0 +1,16 @@
+package PacDemo;
+
+import java.io.IOException;
+
+public class DijisktraServer {
+	public static void main(String[] args) {
+		new DijisktraServer();
+	}
+	public DijisktraServer() {
+		try {
+			
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+	}
+}

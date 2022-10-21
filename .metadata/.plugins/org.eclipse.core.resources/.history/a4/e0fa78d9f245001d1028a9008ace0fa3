@@ -1,0 +1,115 @@
+package PacDemo;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JTextArea;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Font;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+public class Client extends JFrame implements Runnable {
+
+	private JPanel contentPane;
+	private JTextField txtSource;
+	private JTextField txtDestination;
+	public Socket soc;
+	public DataInputStream dis;
+	public DataOutputStream dos;
+	int Matrix[][];
+	
+	public Client(int[][] Matrix) {
+		this.Matrix = Matrix;
+		
+		try {
+			soc = new Socket("localhost", 5000);
+			this.dis = new DataInputStream(soc.getInputStream());
+			this.dos = new DataOutputStream(soc.getOutputStream());
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		new Thread(this).start();
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 701, 441);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+
+		JLabel lblNewLabel = new JLabel("Nguồn");
+		lblNewLabel.setBounds(40, 36, 61, 13);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		JLabel lblNewLabel_1 = new JLabel("Đích");
+		lblNewLabel_1.setBounds(127, 36, 61, 13);
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+
+		txtSource = new JTextField();
+		txtSource.setBounds(40, 55, 65, 32);
+		txtSource.setColumns(10);
+
+		JButton btOK = new JButton("Chọn");
+		btOK.setBounds(72, 112, 116, 32);
+
+		JLabel lblNewLabel_2 = new JLabel("Bảng chỉ đường");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNewLabel_2.setBounds(40, 231, 99, 13);
+
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(40, 254, 239, 135);
+
+		JLabel lbWay = new JLabel("Đường đi:");
+		lbWay.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lbWay.setBounds(326, 256, 189, 13);
+
+		JLabel lbDistance = new JLabel("Khoảng cách:");
+		lbDistance.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lbDistance.setBounds(326, 279, 189, 13);
+
+		JButton btEnd = new JButton("Kết thúc");
+		btEnd.setBounds(557, 357, 120, 32);
+
+		txtDestination = new JTextField();
+		txtDestination.setBounds(137, 55, 65, 32);
+		txtDestination.setColumns(10);
+		contentPane.setLayout(null);
+		contentPane.add(btOK);
+		contentPane.add(lblNewLabel_2);
+		contentPane.add(lbWay);
+		contentPane.add(lbDistance);
+		contentPane.add(btEnd);
+		contentPane.add(textArea);
+		contentPane.add(lblNewLabel);
+		contentPane.add(txtSource);
+		contentPane.add(lblNewLabel_1);
+		contentPane.add(txtDestination);
+
+		JPanel pnMap = new JPanel();
+		pnMap.setBounds(299, 23, 378, 197);
+		contentPane.add(pnMap);
+		this.setVisible(true);
+	}
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+	}
+}

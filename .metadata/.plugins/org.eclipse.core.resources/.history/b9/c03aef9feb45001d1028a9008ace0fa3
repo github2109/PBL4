@@ -1,0 +1,60 @@
+package PacDemo;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+
+class Dijisktra {
+//	public void dijkstra(int G[][],int n,int startnode) {
+//		   int cost[][],distance[],pred[];
+//		   int visited[],count,mindistance,nextnode,i,j;
+//		   for(i=0;i<n;i++)
+//		      for(j=0;j<n;j++)
+//		   if(G[i][j]==0)
+//		      cost[i][j]=Integer.MAX_VALUE;
+//		   else
+//		      cost[i][j]=G[i][j];
+//		   for(i=0;i<n;i++) {
+//		      distance[i]=cost[startnode][i];
+//		      pred[i]=startnode;
+//		      visited[i]=0;
+//		   }
+//		   distance[startnode]=0;
+//		   visited[startnode]=1;
+//		   count=1;
+//		   while(count<n-1) {
+//		      mindistance=Integer.MAX_VALUE;
+//		      for(i=0;i<n;i++)
+//		         if(distance[i] < mindistance && !visited[i]) {
+//		         mindistance=distance[i];
+//		         nextnode=i;
+//		      }
+//		      visited[nextnode]=1;
+//		      for(i=0;i<n;i++)
+//		         if(!visited[i])
+//		      if(mindistance+cost[nextnode][i]<distance[i]) {
+//		         distance[i]=mindistance+cost[nextnode][i];
+//		         pred[i]=nextnode;
+//		      }
+//		      count++;
+//		   }
+//		   for(i=0;i<n;i++)
+//		   if(i!=startnode) {
+//		      cout<<"\nDistance of node"<<i<<"="<<distance[i];
+//		      cout<<"\nPath="<<i;
+//		      j=i;
+//		      do {
+//		         j=pred[j];
+//		         cout<<"<-"<<j;
+//		      }while(j!=startnode);
+//		   }
+//		}
+
+	public static void main(String[] args) {
+		int graph[][] = new int[][] { { 0, 4, 0, 0, 0, 0, 0, 8, 0 }, { 4, 0, 8, 0, 0, 0, 0, 11, 0 },
+				{ 0, 8, 0, 7, 0, 4, 0, 0, 2 }, { 0, 0, 7, 0, 9, 14, 0, 0, 0 }, { 0, 0, 0, 9, 0, 10, 0, 0, 0 },
+				{ 0, 0, 4, 14, 10, 0, 2, 0, 0 }, { 0, 0, 0, 0, 0, 2, 0, 1, 6 }, { 8, 11, 0, 0, 0, 0, 1, 0, 7 },
+				{ 0, 0, 2, 0, 0, 0, 6, 7, 0 } };
+		System.out.println(graph.length);
+	}
+}

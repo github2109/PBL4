@@ -1,0 +1,46 @@
+package PacDemo;
+
+
+public class Dijisktra {
+	public DataReceiveSchema dijkstra(int G[][],int n,int startnode) {
+		   int cost[][],distance[],pred[];
+		   int count,mindistance,nextnode = 0,i,j;
+		   boolean visited[];
+		   cost = new int [G.length][G[0].length];
+		   distance = new int [G.length];
+		   pred = new int [G.length];
+		   visited = new boolean[G.length];
+		   
+		   for(i=0;i<n;i++)
+		      for(j=0;j<n;j++)
+		   if(G[i][j]==0)
+		      cost[i][j]=Integer.MAX_VALUE;
+		   else
+		      cost[i][j]=G[i][j];
+		   for(i=0;i<n;i++) {
+		      distance[i]=cost[startnode][i];
+		      pred[i]=startnode;
+		      visited[i]=false;
+		   }
+		   distance[startnode]=0;
+		   visited[startnode]=true;
+		   count=1;
+		   while(count<n-1) {
+		      mindistance=Integer.MAX_VALUE;
+		      for(i=0;i<n;i++)
+		         if(distance[i] < mindistance && !visited[i]) {
+		         mindistance=distance[i];
+		         nextnode=i;
+		      }
+		      visited[nextnode]=true;
+		      for(i=0;i<n;i++)
+		         if(!visited[i])
+		      if(mindistance+cost[nextnode][i]<distance[i]) {
+		         distance[i]=mindistance+cost[nextnode][i];
+		         pred[i]=nextnode;
+		      }
+		      count++;
+		   }
+		  return new DataReceiveSchema(distance, pred);
+
+}

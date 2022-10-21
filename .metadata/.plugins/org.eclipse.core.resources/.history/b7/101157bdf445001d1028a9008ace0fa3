@@ -1,0 +1,12 @@
+package PacDemo;
+
+public class DataSendSchema {
+	int [][] Matrix;
+	int Source;
+	int Destination;
+	public DataSendSchema(int [][] Matrix,int Source,int Destination) {
+		this.Matrix = Matrix;
+		this.Source = Source;
+		this.Destination = Destination;
+	}
+}

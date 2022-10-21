@@ -1,0 +1,10 @@
+package PacDemo;
+
+public class DataReceiveSchema {
+	 int Distance[];
+	 int Pred[];
+	 public DataReceiveSchema(int Distance[],int Pred[]) {
+		this.Distance = Distance;
+		this.Pred = Pred;
+	}
+}

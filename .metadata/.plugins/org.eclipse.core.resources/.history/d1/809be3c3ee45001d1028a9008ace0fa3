@@ -1,0 +1,22 @@
+package PacDemo;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class DijisktraServer {
+	public static void main(String[] args) {
+		new DijisktraServer();
+	}
+	public DijisktraServer() {
+
+		ServerSocket theServer;
+		Socket theConnection;
+		try {
+			theServer = new ServerSocket(5000);
+			theConnection = theServer.accept();
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+	}
+}

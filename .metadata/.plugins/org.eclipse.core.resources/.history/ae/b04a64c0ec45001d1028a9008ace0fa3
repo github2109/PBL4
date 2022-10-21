@@ -1,0 +1,10 @@
+package PacDemo;
+
+public class DijisktraServer {
+	public static void main(String[] args) {
+		new DijisktraServer();
+	}
+	public DijisktraServer() {
+		
+	}
+}

@@ -2,6 +2,8 @@ package PacDemo;
 
 import java.util.ArrayList;
 
+import Model.DataReceiveSchema;
+
 public class Dijisktra {
 	public static int minDistance(int dist[], Boolean sptSet[]) {
 		int min = Integer.MAX_VALUE, min_index = -1;

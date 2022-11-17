@@ -1,0 +1,99 @@
+package PacDemo;
+
+import java.awt.EventQueue;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Color;
+import java.awt.Cursor;
+
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import java.awt.SystemColor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class CiscoClone extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CiscoClone frame = new CiscoClone();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * @throws IOException 
+	 */
+	public CiscoClone() throws IOException {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1076, 684);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JPanel pnAddRouter = new JPanel();
+		pnAddRouter.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnAddRouter.setBackground(SystemColor.menu);
+		pnAddRouter.setBounds(10, 81, 60, 55);
+		contentPane.add(pnAddRouter);
+		
+		ImageIcon ic1 = new ImageIcon(ClassLoader.getSystemResource("Router.png"));
+        Image i1 = ic1.getImage().getScaledInstance(50, 40,Image.SCALE_SMOOTH);
+        ImageIcon icc1 = new ImageIcon(i1);
+		JLabel picAddRouter = new JLabel(icc1);
+		picAddRouter.setBounds(0, 0, 50, 40);
+		pnAddRouter.add(picAddRouter);
+		picAddRouter.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picAddRouter.addMouseListener(new MouseAdapter() {
+	        @Override
+	        public void mouseClicked(MouseEvent e) { 
+	        	
+	        }
+	    });
+		
+		JPanel pnAddCable = new JPanel();
+		pnAddCable.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnAddCable.setBackground(SystemColor.menu);
+		pnAddCable.setBounds(10, 81, 60, 55);
+		contentPane.add(pnAddCable);
+		
+		ImageIcon ic2 = new ImageIcon(ClassLoader.getSystemResource("Cable.png"));
+        Image i2 = ic2.getImage().getScaledInstance(50, 40,Image.SCALE_SMOOTH);
+        ImageIcon icc2 = new ImageIcon(i2);
+		JLabel picAddCable = new JLabel(icc2);
+		picAddCable.setBounds(0, 0, 50, 40);
+		pnAddCable.add(picAddCable);
+		picAddCable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picAddCable.addMouseListener(new MouseAdapter() {
+	        @Override
+	        public void mouseClicked(MouseEvent e) { 
+	        	
+	        }
+	    });
+		
+	}
+}

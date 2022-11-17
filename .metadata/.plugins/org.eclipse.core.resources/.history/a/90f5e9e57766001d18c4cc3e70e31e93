@@ -1,0 +1,50 @@
+package PacDemo;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+import Model.DataReceiveSchema;
+import Model.DataSendSchema;
+public class ThreadedHandler extends Thread{
+	DijisktraServer sv;
+	public Socket incoming;
+	public DataInputStream dis;
+	public DataOutputStream dos;
+	public ThreadedHandler(DijisktraServer sv, Socket soc) {
+		this.sv = sv;
+		this.incoming = soc;
+		try {
+			this.dis = new DataInputStream(incoming.getInputStream());
+			this.dos = new DataOutputStream(incoming.getOutputStream());
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+	}
+	public void run () {
+		try {
+			DataInputStream input = new DataInputStream(dis);
+			DataOutputStream output = new DataOutputStream(dos);
+			
+			while(true) {
+				String jsonString = input.readLine();
+				if(jsonString != null) {
+					System.out.println(jsonString);
+					DataSendSchema data = (DataSendSchema) DataSendSchema.fromJsonString(jsonString);
+					DataReceiveSchema result = Dijisktra.dijkstra(data.getMatrix(), data.getSource());
+					String resultJsonString = DataReceiveSchema.toJsonString(result);
+					output.writeBytes(resultJsonString + "\n");
+					System.out.println(resultJsonString);
+				}else {
+				}				
+			}
+		} catch (IOException e) {
+			System.out.println("Input Stream error: "+e);
+		} catch (Exception e) {
+			System.out.println("Undefined internal error: "+e);
+		}
+	}
+}

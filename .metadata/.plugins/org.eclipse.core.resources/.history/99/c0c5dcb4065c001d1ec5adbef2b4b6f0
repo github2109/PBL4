@@ -1,0 +1,44 @@
+package Model;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+
+public class DataReceiveSchema extends Object{
+	 int Distance[];
+	 ArrayList<Integer> Pred[];
+	 
+	 public DataReceiveSchema() {};
+	 public DataReceiveSchema(int Distance[],ArrayList<Integer> Pred[]) {
+		this.Distance = Distance;
+		this.Pred = Pred;
+	}
+	public int[] getDistance() {
+		return Distance;
+	}
+	public void setDistance(int[] distance) {
+		Distance = distance;
+	}
+	public ArrayList<Integer>[] getPred() {
+		return Pred;
+	}
+	public void setPred(ArrayList<Integer>[] pred) {
+		Pred = pred;
+	}
+	
+	
+    public static DataReceiveSchema fromJsonString(String json) throws IOException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	ObjectReader reader = mapper.readerFor(DataReceiveSchema.class);
+        return reader.readValue(json);
+    }
+
+    public static String toJsonString(DataReceiveSchema obj) throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	ObjectWriter writer = mapper.writerFor(DataReceiveSchema.class);
+        return writer.writeValueAsString(obj);
+    }
+}

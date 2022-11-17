@@ -1,0 +1,27 @@
+package PacDemo;
+
+import java.net.InetAddress;
+
+public class test {
+	public static void main(String[] args) {
+		InetAddress localhost = InetAddress.getLocalHost();
+	    byte[] ip = localhost.getAddress();
+
+	    for (int i = 1; i <= 254; i++)
+	    {
+	        try
+	        {
+	            ip[3] = (byte)i; 
+	            InetAddress address = InetAddress.getByAddress(ip);
+
+	            if (address.isReachable(100))
+	            {
+	                String output = address.toString().substring(1);
+	                System.out.print(output + " is on the network");
+	            }
+	    }catch (Exception e) {
+			// TODO: handle exception
+		}
+	    }
+	}
+}

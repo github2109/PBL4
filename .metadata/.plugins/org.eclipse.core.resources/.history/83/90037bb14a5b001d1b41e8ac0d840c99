@@ -1,0 +1,15 @@
+package Model;
+
+public class Cable {
+	private Router[] routers;
+	public Cable(Router router) {
+		routers = new Router[2];
+		routers[0] = router;
+	}
+	public Router[] getRouters() {
+		return routers;
+	}
+	public void setRouters(Router[] routers) {
+		this.routers = routers;
+	}
+}

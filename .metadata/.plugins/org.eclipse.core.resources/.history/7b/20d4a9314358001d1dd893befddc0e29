@@ -1,0 +1,35 @@
+package PacDemo;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class test {
+	public static void main(String[] args) throws IOException {
+		final byte[] ip;
+		try {
+			ip = InetAddress.getByName("192.168.1.240");
+		} catch (Exception e) {
+			return; // exit method, otherwise "ip might not have been initialized"
+		}
+
+		for (int i = 1; i <= 254; i++) {
+			final int j = i; // i as non-final variable cannot be referenced from inner class
+			new Thread(new Runnable() { // new thread for parallel execution
+				public void run() {
+					try {
+						ip[3] = (byte) j;
+						InetAddress address = InetAddress.getByAddress(ip);
+						String output = address.toString().substring(1);
+						if (address.isReachable(5000)) {
+							System.out.println(output + " is on the network");
+						} else {
+							System.out.println("Not Reachable: " + output);
+						}
+					} catch (Exception e) {
+					}
+				}
+			}).start(); // dont forget to start the thread
+		}
+	}
+}

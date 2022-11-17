@@ -1,0 +1,62 @@
+package Model;
+
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+public class Router {
+	private int X;
+	private int Y;
+	private JLabel picRouter;
+
+	public Router(int X, int Y) {
+		this.X = X;
+		this.Y = Y;
+		ImageIcon ic1 = new ImageIcon(ClassLoader.getSystemResource("Router.png"));
+		Image i1 = ic1.getImage().getScaledInstance(50, 40, Image.SCALE_SMOOTH);
+		ImageIcon icc1 = new ImageIcon(i1);
+		picRouter = new JLabel(icc1);
+		picRouter.setBounds(X, Y , 60, 50);
+		picRouter.setBorder(BorderFactory.createLineBorder(Color.black));
+	}
+
+	public int getX() {
+		return X;
+	}
+
+	public void setX(int x) {
+		X = x;
+	}
+
+	public int getY() {
+		return Y;
+	}
+
+	public void setY(int y) {
+		Y = y;
+	}
+
+	public JLabel getRouterLabel() {
+		return picRouter;
+	}
+
+	public void setLocation(int X, int Y) {
+		picRouter.setLocation(X - 30, Y - 17);
+		this.X = X;
+		this.Y = Y;
+	}
+
+	public Point getLocation() {
+		return new Point(X, Y);
+	}
+
+	public Point getPointCenter() {
+		return new Point(X + (60 / 2), Y + (50 / 2));
+
+	}
+}

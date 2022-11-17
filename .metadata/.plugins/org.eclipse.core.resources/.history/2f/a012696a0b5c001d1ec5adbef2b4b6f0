@@ -1,0 +1,256 @@
+package PacDemo;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import Model.DataReceiveSchema;
+import Model.DataSendSchema;
+
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JTextArea;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Client extends JFrame implements Runnable {
+
+	private JPanel contentPane;
+	private JTextField txtSource;
+	private JTextField txtDestination;
+	private JPanel pnMap;
+	public Socket soc;
+	public DataInputStream dis;
+	public DataOutputStream dos;
+	int Matrix[][], source = 0, destination;
+	private JTextArea txtMap;
+	private JLabel lblDistance, lblWay;
+	private  ArrayList<Integer> guildMap = null;
+	public Client(int[][] Matrix) {
+		this.Matrix = Matrix;
+
+		try {
+			soc = new Socket("10.10.58.46", 5000);
+			this.dis = new DataInputStream(soc.getInputStream());
+			this.dos = new DataOutputStream(soc.getOutputStream());
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		new Thread(this).start();
+
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 1020, 558);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+
+		JLabel lblNewLabel = new JLabel("Nguồn");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblNewLabel.setBounds(40, 36, 61, 13);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		JLabel lblNewLabel_1 = new JLabel("Đích");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblNewLabel_1.setBounds(127, 36, 61, 13);
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+
+		txtSource = new JTextField();
+		txtSource.setBounds(40, 55, 65, 32);
+		txtSource.setColumns(10);
+
+		JButton btOK = new JButton("Chọn");
+		btOK.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					source = Integer.parseInt(txtSource.getText());
+					destination = Integer.parseInt(txtDestination.getText());
+				} catch (Exception e1) {
+					System.out.println(e1);
+					return;
+				}
+				try {
+					DataSendSchema obj = new DataSendSchema(Matrix, source - 1, destination - 1);
+					dos.writeBytes(DataSendSchema.toJsonString(obj) + "\n");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		btOK.setBounds(72, 112, 116, 32);
+
+		JLabel lblNewLabel_2 = new JLabel("Bảng chỉ đường");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNewLabel_2.setBounds(40, 280, 116, 13);
+
+		txtMap = new JTextArea();
+		txtMap.setTabSize(10);
+		txtMap.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		txtMap.setBackground(Color.WHITE);
+		txtMap.setBounds(40, 303, 251, 195);
+
+		JLabel asdad = new JLabel("Đường đi:");
+		asdad.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		asdad.setBounds(316, 366, 100, 13);
+
+		JLabel asd = new JLabel("Khoảng cách:");
+		asd.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		asd.setBounds(316, 389, 100, 13);
+
+		JButton btEnd = new JButton("Kết thúc");
+		btEnd.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btEnd.setBounds(876, 466, 120, 32);
+
+		txtDestination = new JTextField();
+		txtDestination.setBounds(137, 55, 65, 32);
+		txtDestination.setColumns(10);
+		contentPane.setLayout(null);
+		contentPane.add(btOK);
+		contentPane.add(lblNewLabel_2);
+		contentPane.add(asdad);
+		contentPane.add(asd);
+		contentPane.add(btEnd);
+		contentPane.add(txtMap);
+		contentPane.add(lblNewLabel);
+		contentPane.add(txtSource);
+		contentPane.add(lblNewLabel_1);
+		contentPane.add(txtDestination);
+
+		contentPane.add(new MapPanel(Matrix, source));
+
+		lblWay = new JLabel("");
+		lblWay.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblWay.setBounds(426, 368, 251, 13);
+		contentPane.add(lblWay);
+
+		lblDistance = new JLabel("");
+		lblDistance.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblDistance.setBounds(426, 391, 292, 13);
+		contentPane.add(lblDistance);
+		this.setVisible(true);
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				DataReceiveSchema data = (DataReceiveSchema) DataReceiveSchema.fromJsonString(dis.readLine());
+				String way = "";
+				String map = "";
+				int source = Integer.parseInt(txtSource.getText()) - 1;
+				int destination = Integer.parseInt(txtDestination.getText()) - 1;
+				for (int i = 0; i < data.getPred()[destination].size(); i++) {
+					way += data.getPred()[destination].get(i) + 1 + " ";
+				}
+				for(int i = 0 ;i<data.getPred().length;i++) {
+					if(i == source) continue;
+					map += i+1 + " : ";
+					for(int j = 0 ;j<data.getPred()[i].size();j++) {
+						map += data.getPred()[i].get(j) + 1 + " ";
+						if(j != data.getPred()[i].size() - 1) map += "-> ";
+					}
+					map+="\n";
+				}
+				txtMap.setText(map);
+				lblWay.setText(way);
+				lblDistance.setText(data.getDistance()[destination] + "");
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
+}
+
+class MapPanel extends JPanel {
+	int Matrix[][], source;
+
+	public MapPanel(int Matrix[][], int source) {
+		this.Matrix = Matrix;
+		this.source = source;
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.setSize(680, 342);
+		this.setLocation(298, 10);
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g.create();
+		int n = Matrix.length;
+		Point points[] = new Point[n];
+		int temp = n % 2 == 0 ? n : n + 1;
+		int gapX = 680 / ((temp - 2) / 2 + 1);
+		points[0] = new Point(20, 160);
+		int x = -325;
+		Font f = new Font("Arial", Font.BOLD, 20);
+		g.setFont(f);
+		g.setColor(Color.MAGENTA);
+		g.fillOval(20, 160, 10, 10);
+		g.setColor(Color.BLUE);
+		g.drawString("1", 20, 150);
+		for (int i = 1; i < temp / 2; i++) {
+			x = x + gapX;
+			int y = (int) (150 * Math.sqrt(1 - 1.0 * x * x / (325 * 325)));
+			g.setColor(Color.MAGENTA);
+
+			points[i] = new Point(x + 325, -1 * y + 180);
+			g.fillOval(x + 325, -1 * y + 180, 10, 10);
+			g.setColor(Color.BLUE);
+			g.drawString((i + 1) + "", x + 325, -1 * y + 175);
+			if (i == temp/2 - 1  && n % 2 != 0) {
+				continue;
+			}
+			points[n - i] = new Point(x + 325, y + 140);
+			g.fillOval(x + 325, y + 140, 10, 10);
+
+			g.setColor(Color.BLUE);
+			g.drawString((n - i + 1) + "", x + 325, y + 170);
+		}
+		g.drawString(temp / 2 + 1 + "", 640, 150);
+		g.setColor(Color.MAGENTA);
+		points[temp / 2] = new Point(640, 160);
+		g.fillOval(640, 160, 10, 10);
+		g2d.setStroke(new BasicStroke(3));
+		g.setColor(Color.BLACK);
+		f = new Font("Arial", Font.ITALIC, 15);
+		g.setFont(f);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (i < j && Matrix[i][j] != 0) {
+					g2d.setColor(Color.RED);
+					int x1 = points[i].x + 5, x2 = points[j].x + 5, y1 = points[i].y + 5, y2 = points[j].y + 5;
+					g2d.drawLine(x1, y1, x2, y2);
+
+					g.drawString(Matrix[i][j] + "", (x1 + x2) / 2, (y1 + y2) / 2 - 5);
+				}
+			}
+		}
+	}
+
+}

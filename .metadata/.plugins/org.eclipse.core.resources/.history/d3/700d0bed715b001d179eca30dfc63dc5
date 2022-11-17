@@ -1,0 +1,26 @@
+package Model;
+
+public class Cable {
+	private Router[] routers;
+	public Cable(Router router) {
+		routers = new Router[2];
+		routers[0] = router;
+	}
+	public void setEndRouter(Router router) {
+		routers[1] = router;
+	}
+	public Router[] getRouters() {
+		return routers;
+	}
+	public void setRouters(Router[] routers) {
+		this.routers = routers;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		Cable cable = (Cable) obj;
+		if((cable.routers[1] == routers[0] && cable.routers[0] == routers[1]) || (cable.routers[0] == routers[0] && cable.routers[1] == routers[1])) {
+			return true;
+		}
+		return false;
+	}
+}

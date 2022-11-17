@@ -1,0 +1,55 @@
+package Model
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+
+public class DataSendSchema extends Object{
+//	@JsonProperty("matrix")
+	private int[][] matrix;	
+//	@JsonProperty("source")
+	private int source;
+//	@JsonProperty("destination")
+    private int destination;
+    
+    public DataSendSchema() {};
+    
+    public DataSendSchema(int [][] matrix,int source,int destination) {
+		this.matrix = matrix;
+		this.source = source;
+		this.destination = destination;
+	}
+    
+    public int[][] getMatrix() {
+		return matrix;
+	}
+	public void setMatrix(int[][] matrix) {
+		this.matrix = matrix;
+	}
+    
+	public int getDestination() {
+		return destination;
+	}
+	public void setDestination(int destination) {
+		this.destination = destination;
+	}
+	public int getSource() {
+		return source;
+	}
+	public void setSource(int source) {
+		this.source = source;
+	}
+	
+    public static DataSendSchema fromJsonString(String json) throws IOException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	ObjectReader reader = mapper.readerFor(DataSendSchema.class);
+        return reader.readValue(json);
+    }
+
+    public static String toJsonString(DataSendSchema obj) throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	ObjectWriter writer = mapper.writerFor(DataSendSchema.class);
+        return writer.writeValueAsString(obj);
+    }
+}

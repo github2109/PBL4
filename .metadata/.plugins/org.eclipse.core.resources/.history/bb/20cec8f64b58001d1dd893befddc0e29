@@ -1,0 +1,41 @@
+package PacDemo;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class test {
+	public static void main(String[] args) throws IOException, InterruptedException {
+		final byte[] ip;
+		try {
+			ip = InetAddress.getByName("192.168.1.240").getAddress();
+		} catch (Exception e) {
+			return;
+		}
+		for (int i = 1; i <= 254; i++) {
+			final int j = i; 
+			Thread thread = new Thread(new Runnable() { 
+				public void run() {
+					try {
+						ip[3] = (byte) j;
+						InetAddress address = InetAddress.getByAddress(ip);
+						String output = address.toString().substring(1);
+						if (address.isReachable(5000)) {
+							System.out.println(output + " is on the network");
+						} else {
+							//System.out.println("Not Reachable: " + output);
+						}
+						if(j == 251 ) {
+							if (address.isReachable(90000)) {
+								System.out.println(output + " is on the network");
+							}
+						}
+					} catch (Exception e) {
+					}
+				}
+			});
+			thread.start();
+		}
+		System.out.println("ok");
+	}
+}

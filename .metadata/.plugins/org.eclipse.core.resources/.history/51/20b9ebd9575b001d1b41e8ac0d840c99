@@ -1,0 +1,210 @@
+package PacDemo;
+
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+
+import javax.swing.border.EtchedBorder;
+
+import Model.Cable;
+import Model.Router;
+
+import java.awt.SystemColor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
+
+public class CiscoClone extends JFrame implements MouseMotionListener, MouseListener {
+
+	private JPanel contentPane;
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CiscoClone frame = new CiscoClone();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	enum Device {
+		NONE, ROUTER, CABLE_START, CABLE_END
+	}
+
+	Device device = Device.NONE;
+	Cable tmpCable;
+	Vector<Cable> Cables = new Vector<Cable>();
+
+	public CiscoClone() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1300, 684);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JPanel pnAddRouter = new JPanel();
+		pnAddRouter.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnAddRouter.setBackground(SystemColor.menu);
+		pnAddRouter.setBounds(10, 81, 60, 55);
+		contentPane.add(pnAddRouter);
+
+		ImageIcon ic1 = new ImageIcon(ClassLoader.getSystemResource("Router.png"));
+		Image i1 = ic1.getImage().getScaledInstance(50, 40, Image.SCALE_SMOOTH);
+		ImageIcon icc1 = new ImageIcon(i1);
+		JLabel picAddRouter = new JLabel(icc1);
+		picAddRouter.setBounds(0, 0, 50, 40);
+		pnAddRouter.add(picAddRouter);
+		picAddRouter.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picAddRouter.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				device = Device.ROUTER;
+			}
+		});
+
+		JPanel pnAddCable = new JPanel();
+		pnAddCable.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnAddCable.setBackground(SystemColor.menu);
+		pnAddCable.setBounds(10, 132, 60, 55);
+		contentPane.add(pnAddCable);
+
+		ImageIcon ic2 = new ImageIcon(ClassLoader.getSystemResource("Cable.png"));
+		Image i2 = ic2.getImage().getScaledInstance(50, 40, Image.SCALE_SMOOTH);
+		ImageIcon icc2 = new ImageIcon(i2);
+		JLabel picAddCable = new JLabel(icc2);
+		picAddCable.setBounds(0, 0, 50, 40);
+		pnAddCable.add(picAddCable);
+		picAddCable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picAddCable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				device = Device.CABLE_START;
+			}
+		});
+
+		addMouseListener(this);
+		addMouseMotionListener(this);
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		if (tmpCable != null) {
+			if (tmpCable.getRouters()[0] != null && tmpCable.getRouters()[0] != null) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setStroke(new BasicStroke(3));
+				g2.draw(new Line2D.Float(tmpCable.getRouters()[0].getLocation(),
+						tmpCable.getRouters()[1].getLocation()));
+			}
+		}
+		for(int i = 0;i<Cables.size();i++) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setStroke(new BasicStroke(3));
+			Router[] routers = Cables.get(i).getRouters();
+			g2.draw(new Line2D.Float(routers[0].getLocation(),
+					routers[1].getLocation()));
+		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		if (device == Device.CABLE_END) {
+			tmpCable.setEndRouter(new Router(e.getX(), e.getY()));
+			repaint();
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (this.device == Device.ROUTER) {
+			Router router = new Router(e.getX(), e.getY());
+			contentPane.add(router.getRouterLabel());
+
+			router.getRouterLabel().addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e1) {
+					if (device == Device.CABLE_START) {
+						tmpCable = new Cable(router);
+						device = Device.CABLE_END;
+					} else if (device == Device.CABLE_END) {
+						if (tmpCable.getRouters()[0] == router)
+							return;
+						tmpCable.setEndRouter(router);
+						if (Cables.contains(tmpCable))
+							return;
+						Cables.add(tmpCable);
+						device = Device.NONE;
+						repaint();
+					}
+				}
+			});
+			router.getRouterLabel().addMouseMotionListener(new MouseMotionListener() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void mouseDragged(MouseEvent e1) {
+					router.setLocation(e1.getX() - 30 + router.getRouterLabel().getX(),
+							e1.getY() - 40 + router.getRouterLabel().getY());
+					repaint();
+				}
+			});
+			this.repaint();
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+}

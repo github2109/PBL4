@@ -1,0 +1,63 @@
+package PacDemo;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import Model.Cable;
+
+import javax.swing.JButton;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class CableDetail extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private Cable cable;
+	/**
+	 * Launch the application.
+	 */
+
+	/**
+	 * Create the frame.
+	 */
+	public CableDetail(Cable cable) {
+		this.cable= cable;
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 419, 250);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnOK = new JButton("OK");
+		btnOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cable.setDistance(Integer.parseInt(textField.getText()));
+				System.exit(1);
+			}
+		});
+		btnOK.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnOK.setBounds(146, 168, 97, 25);
+		contentPane.add(btnOK);
+		
+		JLabel lblNewLabel = new JLabel("Distance :");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel.setBounds(54, 79, 73, 13);
+		contentPane.add(lblNewLabel);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		textField.setBounds(137, 74, 180, 25);
+		textField.setText(cable.getDistance() + "");
+		contentPane.add(textField);
+		textField.setColumns(10);
+	}
+}

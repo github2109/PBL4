@@ -1,0 +1,27 @@
+package PacDemo;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class test {
+	
+	public static void main(String[] args) throws IOException, InterruptedException {
+		try {
+		      String[] cmdarray = { "nmap", "--traceroute", "nmap.org" };
+		      Process p = Runtime.getRuntime().exec(cmdarray);
+		      BufferedReader in = new BufferedReader(new InputStreamReader(
+		          p.getInputStream()));
+		      String line = null;
+		      while ((line = in.readLine()) != null) {
+		        if (line.contains("HOP")) {
+		          System.out.println(line);
+		        }
+		      }
+		    } catch (IOException e) {
+		      e.printStackTrace();
+		    }
+	}
+}

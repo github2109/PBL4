@@ -8,6 +8,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Model.DataReceiveSchema;
+import Model.DataSendSchema;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -42,27 +46,23 @@ public class Client extends JFrame implements Runnable {
 	public Socket soc;
 	public DataInputStream dis;
 	public DataOutputStream dos;
-	public ObjectOutputStream output;
-	public ObjectInputStream input;
 	int Matrix[][], source = 0, destination;
 	private JTextArea txtMap;
 	private JLabel lblDistance, lblWay;
-
+	private MapPanel mapPanel;
 	public Client(int[][] Matrix) {
 		this.Matrix = Matrix;
 
 		try {
-			soc = new Socket("localhost", 5000);
+			soc = new Socket("44.206.239.34", 5000);
 			this.dis = new DataInputStream(soc.getInputStream());
 			this.dos = new DataOutputStream(soc.getOutputStream());
-			this.output = new ObjectOutputStream(dos);
-			this.input = new ObjectInputStream(dis);
 		} catch (IOException e) {
 			System.out.println(e);
 		}
 		new Thread(this).start();
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1020, 558);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -95,7 +95,7 @@ public class Client extends JFrame implements Runnable {
 				}
 				try {
 					DataSendSchema obj = new DataSendSchema(Matrix, source - 1, destination - 1);
-					output.writeObject(obj);
+					dos.writeBytes(DataSendSchema.toJsonString(obj) + "\n");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -142,7 +142,8 @@ public class Client extends JFrame implements Runnable {
 		contentPane.add(lblNewLabel_1);
 		contentPane.add(txtDestination);
 
-		contentPane.add(new MapPanel(Matrix, source));
+		mapPanel = new MapPanel(Matrix, source,null);
+		contentPane.add(mapPanel);
 
 		lblWay = new JLabel("");
 		lblWay.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -160,11 +161,14 @@ public class Client extends JFrame implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				DataReceiveSchema data = (DataReceiveSchema) input.readObject();
+				DataReceiveSchema data = (DataReceiveSchema) DataReceiveSchema.fromJsonString(dis.readLine());
 				String way = "";
 				String map = "";
 				int source = Integer.parseInt(txtSource.getText()) - 1;
 				int destination = Integer.parseInt(txtDestination.getText()) - 1;
+				
+				mapPanel = new MapPanel(Matrix, source, data.getPred()[destination]);
+				
 				for (int i = 0; i < data.getPred()[destination].size(); i++) {
 					way += data.getPred()[destination].get(i) + 1 + " ";
 				}
@@ -180,6 +184,7 @@ public class Client extends JFrame implements Runnable {
 				txtMap.setText(map);
 				lblWay.setText(way);
 				lblDistance.setText(data.getDistance()[destination] + "");
+				mapPanel.repaint();
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -189,13 +194,14 @@ public class Client extends JFrame implements Runnable {
 
 class MapPanel extends JPanel {
 	int Matrix[][], source;
-
-	public MapPanel(int Matrix[][], int source) {
+	ArrayList<Integer> guildMap;
+	public MapPanel(int Matrix[][], int source,ArrayList<Integer> guildMap) {
 		this.Matrix = Matrix;
 		this.source = source;
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setSize(680, 342);
 		this.setLocation(298, 10);
+		this.guildMap = guildMap;
 	}
 
 	@Override
@@ -218,16 +224,18 @@ class MapPanel extends JPanel {
 			x = x + gapX;
 			int y = (int) (150 * Math.sqrt(1 - 1.0 * x * x / (325 * 325)));
 			g.setColor(Color.MAGENTA);
-			if (i != 1 && n % 2 != 0) {
+
+			points[i] = new Point(x + 325, -1 * y + 180);
+			g.fillOval(x + 325, -1 * y + 180, 10, 10);
+			g.setColor(Color.BLUE);
+			g.drawString((i + 1) + "", x + 325, -1 * y + 175);
+			if (i == temp/2 - 1  && n % 2 != 0) {
 				continue;
 			}
 			points[n - i] = new Point(x + 325, y + 140);
 			g.fillOval(x + 325, y + 140, 10, 10);
-			points[i] = new Point(x + 325, -1 * y + 180);
-			g.fillOval(x + 325, -1 * y + 180, 10, 10);
 
 			g.setColor(Color.BLUE);
-			g.drawString((i + 1) + "", x + 325, -1 * y + 175);
 			g.drawString((n - i + 1) + "", x + 325, y + 170);
 		}
 		g.drawString(temp / 2 + 1 + "", 640, 150);
@@ -238,10 +246,17 @@ class MapPanel extends JPanel {
 		g.setColor(Color.BLACK);
 		f = new Font("Arial", Font.ITALIC, 15);
 		g.setFont(f);
+		int pointer = 0;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				if (i < j && Matrix[i][j] != 0) {
 					g2d.setColor(Color.RED);
+					if(guildMap != null) {
+						if(guildMap.get(pointer) == i && guildMap.get(pointer + 1) == j) {
+							g2d.setColor(Color.BLUE);
+							pointer++;
+						}
+					}
 					int x1 = points[i].x + 5, x2 = points[j].x + 5, y1 = points[i].y + 5, y2 = points[j].y + 5;
 					g2d.drawLine(x1, y1, x2, y2);
 

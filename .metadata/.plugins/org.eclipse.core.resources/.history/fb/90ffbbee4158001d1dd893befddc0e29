@@ -1,0 +1,19 @@
+package PacDemo;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class test {
+	public static void main(String[] args) throws UnknownHostException {
+		String subnet = "192.168.1";
+		int timeout = 100;
+        for (int i = 1; i < 255; i++)
+        {
+            String host = subnet + "." + i;
+            if (InetAddress.getByName(host).isReachable(timeout))
+            {
+                System.out.println(host + " is reachable");
+            }
+        }
+	}
+}
